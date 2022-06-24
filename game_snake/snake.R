@@ -41,6 +41,7 @@ stage1<-function(){
       e$m[fx,fy]<-e$col_furit
       print(paste("furit idx",idx))
       print(paste("furit axis:",fx,fy))
+      beep(2)  #吃水果时加上音效
     }
   }
   
@@ -72,6 +73,7 @@ stage1<-function(){
     if(length(which(e$head<1))>0 | length(which(e$head>e$width))>0){
       print("game over: Out of ledge.")
       keydown('q')
+      beep(9)
       return(TRUE)
     }
     
@@ -79,19 +81,24 @@ stage1<-function(){
     if(e$m[e$head[1],e$head[2]]==e$col_tail){
       print("game over: head hit tail")
       keydown('q')
+      beep(9)
       return(TRUE)
     }
     
-    #head碰到黑色障碍物
-    if(length(which(e$head<1))>0 | length(which(e$head>e$obstacle))>0){
+    #head碰到障碍物
+    if(e$m[e$head[1],e$head[2]]==e$col_obstacle){
       print("game over: head hit obstacle")
       keydown('q')
+      beep(9)
       return(TRUE)
     }
+    
     #tail碰到黑色障碍物
-    if(length(which(e$tail>e$obstacle))>0){
+    #head 碰到黑色障碍物
+    if(e$m[e$head[1],e$head[2]]==e$col_obstacle){
       print("game over: tail hit obstacle")
       keydown('q')
+      beep(9)  
       return(TRUE)
     }
     return(FALSE)
@@ -117,7 +124,7 @@ stage1<-function(){
     e$m[e$head[1],e$head[2]]<-e$col_head #snake
     if(length(index(e$col_furit))<=0){ #不存在水果
       e$tail<-rbind(e$tail,data.frame(x=e$lastx,y=e$lasty))
-
+      
     }
     
     if(nrow(e$tail)>0) { #如果有尾巴
@@ -188,7 +195,17 @@ stage3<-function(){
   text(0.5,0.3,label=paste("You have eat",nrow(e$tail),"fruits!"),cex=2,col=2)
   text(0.2,0.05,label="Author:DanZhang",cex=1)
   text(0.5,0.05,label="http://blog.fens.me",cex=1)
- 
+  
+}
+
+#连吃三个加两分
+Get3Points<-function(){
+  flag<-0
+  flag<-which(which(e$col_furit)==3)
+  if(length(flag)>0){
+    nrow(e$tail)<-nrow(e$tail)+2*length(flag)
+  }
+  
 }
 
 
@@ -249,6 +266,5 @@ run<-function(){
 }
 
 run()
-
 
 
